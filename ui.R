@@ -4,21 +4,23 @@ library(shiny)
 ui <- fluidPage(
    
    # Application title
-   titlePanel("Old Faithful Geyser Data"),
+   titlePanel("Genotype Read Depth"),
    
-   # Sidebar with a slider input for number of bins 
+   # Sidebar with a slider input for minimum depth
+   # The average depth is 29.59
    sidebarLayout(
       sidebarPanel(
-         sliderInput("bins",
-                     "Number of bins:",
-                     min = 1,
-                     max = 50,
+         sliderInput("minDepth",
+                     "Minimum genotype depth",
+                     min = 0,
+                     max = 84,
                      value = 30)
       ),
       
       # Show a plot of the generated distribution
       mainPanel(
-         plotOutput("distPlot")
+         plotOutput("depthPlot"),
+         plotOutput("missPlot")
       )
    )
 )
