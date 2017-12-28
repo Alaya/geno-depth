@@ -1,6 +1,9 @@
+rsconnect/
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
 *.csv
 *.tsv
+*.swo
+*.swp

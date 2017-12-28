@@ -20,7 +20,8 @@ ui <- fluidPage(
       # Show a plot of the generated distribution
       mainPanel(
          plotOutput("depthPlot"),
-         plotOutput("missPlot")
+         plotOutput("hetPlot")
+         # plotOutput("missPlot")
       )
    )
 )
