@@ -3,8 +3,9 @@ library(ggplot2)
 
 MAXDEPTH = 84
 
-depth <- read.table("depth.tsv", sep = "\t", header = TRUE)
-het   <- read.table("het_minDP0.tsv", sep = "\t", header = TRUE)
+depth   <- read.table("depth.tsv", sep = "\t", header = TRUE)
+het     <- read.table("het_minDP0.tsv", sep = "\t", header = TRUE)
+meanHet <- read.table("het_mean.tsv", sep = "\t", header = TRUE)
 
 server <- function(input, output) {
    
@@ -20,8 +21,53 @@ server <- function(input, output) {
            ylab = "Number of Genotypes (Thousands)")
       lines(df, type = "s")
       abline(v = input$minDepth)
+      
+      ggplot(df, aes(x = Bin, y = Freq)) +
+        geom_step() +
+        xlim(0, MAXDEPTH) +
+        geom_vline(xintercept = input$minDepth) +
+        ggtitle("Genotype Depth Distribution") +
+        xlab("Genotype Read Depth") + 
+        ylab("Number of Genotypes (Thousands)")
    })
   
+  # Render bar plot of sample F values at given depth 
+  # threshold
+  output$hetPlot <- renderPlot({
+    Indv <- factor(het[, 1])
+    df   <- cbind(Indv, het[5])   
+    
+    ggplot(data = df, aes(x = Indv, y = F)) +
+        geom_bar(stat = "identity") +
+        ggtitle("Heterozygosity By Sample") +
+        xlab("Sample Identifier") +
+        ylab("Inbreeding Coefficient")
+   })
+
+  output$meanHetPlot <- renderPlot({
+      df <- meanHet
+      
+      ggplot(df, aes(x = Depth, y = Mean_F)) +
+        geom_step() +
+        # xlim(0, input$minDepth + 5) +
+        geom_vline(xintercept = input$minDepth) +
+        ggtitle("Mean Heterozygosity By Depth Threshold") +
+        xlab("Minimum Genotype Depth Threshold") +
+        ylab("Inbreeding Coefficient")
+   })
+  
+  # Render bar plot of sample F values at given depth 
+  # threshold
+  output$hetPlot <- renderPlot({
+    Indv <- factor(het[, 1])
+    df   <- cbind(Indv, het[5])   
+    
+    ggplot(data = df, aes(x = Indv, y = F)) +
+        geom_bar(stat = "identity") +
+        ggtitle("Heterozygosity By Sample") +
+        xlab("Sample Identifier") +
+        ylab("Inbreeding Coefficient")
+   })
   output$missPlot <- renderPlot({
       df <- cbind(depth[1], depth[2] / 1000)
      
@@ -33,25 +79,4 @@ server <- function(input, output) {
       lines(df, type = "s")
       abline(v = input$minDepth)
    })
-  
-  output$hetPlot <- renderPlot({
-    print(het[, 1])
-    Indv <- factor(het[, 1])
-    print(Indv)
-    print(class(Indv))
-    
-    # df <- cbind(het[1], het[5])   
-    df <- cbind(Indv, het[5])   
-    print(df)
-    
-    ggplot(data = df, aes(x = Indv, y = F)) +
-        geom_bar(stat = "identity") +
-        ggtitle("Heterozygosity By Sample") +
-        xlab("Sample Identifier") +
-        ylab("Inbreeding Coefficient")
-      # barplot(het$F, het$INDV)
-           # main = "Heterozygosity Per Sample", 
-           # xlab = "Sample Identifier", 
-           # ylab = "Inbreeding Coefficient")
-   })
-}
+}  

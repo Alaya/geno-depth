@@ -4,7 +4,7 @@ library(shiny)
 ui <- fluidPage(
    
    # Application title
-   titlePanel("Genotype Read Depth"),
+   titlePanel("Impact of Varying Minimum Read Depth"),
    
    # Sidebar with a slider input for minimum depth
    # The average depth is 29.59
@@ -20,7 +20,12 @@ ui <- fluidPage(
       # Show a plot of the generated distribution
       mainPanel(
          plotOutput("depthPlot"),
-         plotOutput("hetPlot")
+         tabsetPanel(type = "tabs",
+            tabPanel("Mean Heterozygosity", 
+                     plotOutput("meanHetPlot")),
+            tabPanel("Sample Heterozygosity", 
+                     plotOutput("hetPlot"))
+         )
          # plotOutput("missPlot")
       )
    )
