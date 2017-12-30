@@ -9,11 +9,11 @@ df_means = pd.read_csv("het_mean.tsv", sep='\t')
 df = df.iloc[:, [0, 4]]
 df.rename(columns={'F': '0'}, inplace=True)
 
-base = df_means.iloc[0, 1]
+mean_diffs = df_means.diff().iloc[1:, 1]
 
-for index, mean in enumerate(df_means.iloc[1:, 1]):
-  noise =  np.random.normal(0,0.005)
-  kwargs = {str(index+1) : df['0'].values + mean - base + noise}
+for index, mean_diff in enumerate(mean_diffs):
+  noise =  np.random.normal(0, mean_diff / 3, len(df.index))
+  kwargs = {str(index+1) : df.iloc[:, -1].values + mean_diff + noise}
   df = df.assign(**kwargs)
 
 print df
