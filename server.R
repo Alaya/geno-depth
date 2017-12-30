@@ -4,8 +4,10 @@ library(ggplot2)
 MAXDEPTH = 84
 
 depth   <- read.table("depth.tsv", sep = "\t", header = TRUE)
-het     <- read.table("het_minDP0.tsv", sep = "\t", header = TRUE)
 meanHet <- read.table("het_mean.tsv", sep = "\t", header = TRUE)
+
+het      <- read.table("het.tsv", sep = "\t", header = TRUE)
+het$Indv <- as.factor(het$Indv)
 
 server <- function(input, output) {
    
@@ -30,19 +32,6 @@ server <- function(input, output) {
         xlab("Genotype Read Depth") + 
         ylab("Number of Genotypes (Thousands)")
    })
-  
-  # Render bar plot of sample F values at given depth 
-  # threshold
-  output$hetPlot <- renderPlot({
-    Indv <- factor(het[, 1])
-    df   <- cbind(Indv, het[5])   
-    
-    ggplot(data = df, aes(x = Indv, y = F)) +
-        geom_bar(stat = "identity") +
-        ggtitle("Heterozygosity By Sample") +
-        xlab("Sample Identifier") +
-        ylab("Inbreeding Coefficient")
-   })
 
   output$meanHetPlot <- renderPlot({
       df <- meanHet
@@ -59,15 +48,15 @@ server <- function(input, output) {
   # Render bar plot of sample F values at given depth 
   # threshold
   output$hetPlot <- renderPlot({
-    Indv <- factor(het[, 1])
-    df   <- cbind(Indv, het[5])   
-    
-    ggplot(data = df, aes(x = Indv, y = F)) +
+    ggplot(data = het, 
+           aes(x = Indv, y = het[, input$minDepth + 2])) + 
         geom_bar(stat = "identity") +
+        ylim(-0.1, 0.1) +
         ggtitle("Heterozygosity By Sample") +
         xlab("Sample Identifier") +
         ylab("Inbreeding Coefficient")
    })
+  
   output$missPlot <- renderPlot({
       df <- cbind(depth[1], depth[2] / 1000)
      

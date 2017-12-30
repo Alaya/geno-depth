@@ -1,4 +1,6 @@
 rsconnect/
+test.R
+*.bk
 .Rproj.user
 .Rhistory
 .RData
