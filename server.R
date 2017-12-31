@@ -3,15 +3,17 @@ library(ggplot2)
 
 MAXDEPTH = 84
 
-depth   <- read.table("depth.tsv", sep = "\t", header = TRUE)
+# Read data and 
+depth    <- read.table("data/depth.tsv", 
+                      sep = "\t", header = TRUE)
 
-het       <- read.table("het.tsv", sep = "\t", header = TRUE)
-het$Indv  <- as.factor(het$Indv)
+het      <- read.table("data/het.tsv", 
+                        sep = "\t", header = TRUE)
+het$Indv <- as.factor(het$Indv)
 
 hetMeans <- colMeans(het[-1])
-numDepths = length(hetMeans) - 1
-hetMeans <- data.frame("Depth" = 0:numDepths, "Mean_F" = hetMeans)
-rownames(hetMeans) <- NULL
+hetMeans <- data.frame("Depth" = seq_along(hetMeans) - 1, 
+                       "Mean_F" = hetMeans)
 
 server <- function(input, output) {
    
