@@ -14,19 +14,19 @@ ui <- fluidPage(
                      "Minimum genotype depth",
                      min = 0,
                      max = 84,
-                     value = 0)
+                     value = 30)
       ),
       
       # Show a plot of the generated distribution
       mainPanel(
          plotOutput("depthPlot"),
+         plotOutput("missPlot"),
          tabsetPanel(type = "tabs",
             tabPanel("Sample Heterozygosity", 
                      plotOutput("hetPlot")),
             tabPanel("Mean Heterozygosity", 
                      plotOutput("meanHetPlot"))
          )
-         # plotOutput("missPlot")
       )
    )
 )

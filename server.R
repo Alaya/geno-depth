@@ -3,12 +3,11 @@ library(ggplot2)
 
 MAXDEPTH = 84
 
-# Read data and 
-depth    <- read.table("data/depth.tsv", 
-                      sep = "\t", header = TRUE)
+# Read data and perform once-per-process manipulation
+depth    <- read.delim("data/depth.tsv") 
+miss     <- read.delim("data/miss.tsv")
 
-het      <- read.table("data/het.tsv", 
-                        sep = "\t", header = TRUE)
+het      <- read.delim("data/het.tsv")
 het$Indv <- as.factor(het$Indv)
 
 hetMeans <- colMeans(het[-1])
@@ -20,17 +19,7 @@ server <- function(input, output) {
   # Render step plot of genotype depths 
   # Include vertical line at selected minimum
   output$depthPlot <- renderPlot({
-      df <- cbind(depth[1], depth[2] / 1000)
-     
-      plot(df, type = "n", 
-           xlim = c(0, MAXDEPTH),
-           main = "Genotype Depth Distribution", 
-           xlab = "Genotype Read Depth", 
-           ylab = "Number of Genotypes (Thousands)")
-      lines(df, type = "s")
-      abline(v = input$minDepth)
-      
-      ggplot(df, aes(x = Bin, y = Freq)) +
+      ggplot(depth, aes(x = Depth, y = Freq / 1000)) +
         geom_step() +
         xlim(0, MAXDEPTH) +
         geom_vline(xintercept = input$minDepth) +
@@ -55,20 +44,19 @@ server <- function(input, output) {
       ggplot(hetMeans, aes(x = Depth, y = Mean_F)) +
         geom_step() +
         geom_vline(xintercept = input$minDepth) +
+        xlim(0, MAXDEPTH) +
         ggtitle("Mean Heterozygosity By Depth Threshold") +
         xlab("Minimum Genotype Depth Threshold") +
         ylab("Inbreeding Coefficient")
    })
   
   output$missPlot <- renderPlot({
-      df <- cbind(depth[1], depth[2] / 1000)
-     
-      plot(df, type = "n", 
-           xlim = c(0, MAXDEPTH),
-           main = "Missing Site Distribution", 
-           xlab = "Number of Sites Dropped", 
-           ylab = "Maximum Allowed Missing Genotypes")
-      lines(df, type = "s")
-      abline(v = input$minDepth)
+      ggplot(miss, aes(x = N_Smp, y = miss[3])) +
+        geom_step() +
+        # xlim(0, MAXDEPTH) +
+        # geom_vline(xintercept = input$minDepth) +
+        ggtitle("Missing Site Distribution") + 
+        xlab("Maximum Allowed Missing Samples") +
+        ylab("Number of Sites Dropped")
    })
 }  
