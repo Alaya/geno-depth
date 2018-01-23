@@ -57,12 +57,13 @@ server <- function(input, output) {
   
   output$missPlot <- renderPlot({
       ggplot(miss, 
-        aes(x = N_Smp, y = miss[, input$minDepth + 3])) + 
+        aes(x = N_Smp - 0.5, 
+            y = miss[, input$minDepth + 3] / 1000000)) + 
         geom_step(color = COLOR) +
-        xlim(0, 12) +
+        scale_x_continuous(breaks = seq(0, 11)) +
         # geom_vline(xintercept = input$minDepth) +
         ggtitle("Missing Site Distribution") + 
         xlab("Maximum Allowed Missing Samples") +
-        ylab("Number of Sites Dropped")
+        ylab("Number of Sites Dropped (Millions)")
    })
 }  
