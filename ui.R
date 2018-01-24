@@ -7,13 +7,13 @@ library(shinythemes)
 #        background-color:#003d3d;
 # theme background is #2b3e50
 ui <- fluidPage(theme = shinytheme("superhero"),
-  #tags$head(
-  #  tags$style(HTML("
-  #    body {
-  #      background-color:#093434;
-  #    }
-  #  "))
-  # ),
+  tags$head(
+    tags$style(HTML("
+      body {
+      }
+    "))
+   ),
+  
   # Application title
   titlePanel("Impact of Varying Minimum Read Depth"),
    
@@ -26,9 +26,11 @@ ui <- fluidPage(theme = shinytheme("superhero"),
                   min = 0,
                   max = 84,
                   value = 30),
-      p("Heterozygosity"),
-      p(paste("Mean", 40, ", Std Dev", 3.2))
-      # hetStats$Mean_F[30]
+        hr(),
+        h5("Heterozygosity"),
+        htmlOutput("hetSummary"),
+        hr(),
+        h5("Missingness")
       ),
       
       # Show a plot of the generated distribution
@@ -37,7 +39,7 @@ ui <- fluidPage(theme = shinytheme("superhero"),
             tabPanel("Min Depth",
                      plotOutput("depthPlot")),
             tabPanel("Sample Het",
-                     plotOutput("hetPlot")),
+                     plotlyOutput("hetPlot")),
             tabPanel("Mean Het",
                      plotOutput("meanHetPlot")),
             tabPanel("Missing Sites",

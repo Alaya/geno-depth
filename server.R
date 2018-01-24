@@ -1,5 +1,6 @@
 library(shiny)
 library(ggplot2)
+library(plotly)
 
 MAXDEPTH = 84
 COLOR = "#2b3e50"
@@ -19,8 +20,15 @@ hetStats <- data.frame("Depth" = seq_along(het[-1]) - 1,
                          "SD_F" = sapply(het[-1], sd))
 
 server <- function(input, output) {
-  # output$meanHet <- hetStats$Mean_F[30]  
-  # output$foo <- "test"
+  output$hetSummary <- renderText({
+    paste("<h6>Mean:", round(hetStats$Mean_F[input$minDepth+1], 4),
+          "<br>Std Dev:", round(hetStats$SD_F[input$minDepth+1], 4))
+  })
+  
+  output$hetMean <- renderText({
+    hetStats$Mean_F[input$minDepth + 1]
+  })
+  
   # Render step plot of genotype depths 
   # Include vertical line at selected minimum
   output$depthPlot <- renderPlot({
@@ -35,14 +43,22 @@ server <- function(input, output) {
 
   # Render bar plot of sample F values at given depth 
   # threshold
-  output$hetPlot <- renderPlot({
-    ggplot(data = het, 
-           aes(x = Indv, y = het[, input$minDepth + 2])) +
-        geom_bar(stat = "identity", fill = COLOR) +
-        ylim(-0.1, 0.1) +
-        ggtitle("Heterozygosity By Sample") +
-        xlab("Sample Identifier") +
-        ylab("Inbreeding Coefficient")
+  output$hetPlot <- renderPlotly({
+    print(ggplotly(
+      ggplot(
+        data = het, 
+        aes(x = Indv, 
+            y = het[, input$minDepth + 2], 
+            text = paste("F: ", 
+                         round(het[, input$minDepth + 2], 4)) 
+        )) +
+      geom_bar(stat = "identity", fill = COLOR) +
+      ylim(-0.1, 0.1) +
+      ggtitle("Heterozygosity By Sample") +
+      xlab("Sample Identifier") +
+      ylab("Inbreeding Coefficient"),
+      tooltip = c("text")
+    ))
    })
   
   output$meanHetPlot <- renderPlot({
@@ -60,8 +76,8 @@ server <- function(input, output) {
         aes(x = N_Smp - 0.5, 
             y = miss[, input$minDepth + 3] / 1000000)) + 
         geom_step(color = COLOR) +
+        ylim(0, 4) +
         scale_x_continuous(breaks = seq(0, 11)) +
-        # geom_vline(xintercept = input$minDepth) +
         ggtitle("Missing Site Distribution") + 
         xlab("Maximum Allowed Missing Samples") +
         ylab("Number of Sites Dropped (Millions)")
