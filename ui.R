@@ -2,10 +2,6 @@ library(shiny)
 library(shinythemes)
 
 # Define UI for application that draws a histogram
-# ui <- fluidPage(theme = shinytheme("flatly"),
-# ui <- fluidPage(theme = "superhero.css",
-#        background-color:#003d3d;
-# theme background is #2b3e50
 ui <- fluidPage(theme = shinytheme("superhero"),
   tags$head(
     tags$style(HTML("
@@ -24,8 +20,8 @@ ui <- fluidPage(theme = shinytheme("superhero"),
       sliderInput("minDepth",
                   "Minimum genotype depth",
                   min = 0,
-                  max = 84,
-                  value = 30),
+                  max = 84,       # TODO: should be shared
+                  value = 30)     # TODO: should be calculated
         hr(),
         h5("Heterozygosity"),
         htmlOutput("hetSummary"),
@@ -33,7 +29,7 @@ ui <- fluidPage(theme = shinytheme("superhero"),
         h5("Missingness")
       ),
       
-      # Show a plot of the generated distribution
+      # Show plots of statistics affected by the depth threshold
       mainPanel(
          tabsetPanel(type = "tabs",
             tabPanel("Min Depth",
