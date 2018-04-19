@@ -2,8 +2,8 @@ library(shiny)
 library(ggplot2)
 library(plotly)
 
-MAXDEPTH = 84
-COLOR = "#2b3e50"
+MAXDEPTH = 84       # mean + 3 * sd, TODO: calculate as max of truncated data
+COLOR = "#2b3e50"   # theme background is #2b3e50
 
 # Read data and perform once-per-process manipulation
 depth    <- read.delim("data/depth.tsv") 
@@ -61,6 +61,7 @@ server <- function(input, output) {
     ))
    })
   
+  # Render plot of mean heterozygosity by given depth threshold
   output$meanHetPlot <- renderPlot({
       ggplot(hetStats, aes(x = Depth, y = Mean_F)) +
         geom_step(color = COLOR) +
@@ -71,6 +72,7 @@ server <- function(input, output) {
         ylab("Inbreeding Coefficient")
    })
   
+  # Render plot of missingness for the given depth threshold
   output$missPlot <- renderPlot({
       ggplot(miss, 
         aes(x = N_Smp - 0.5, 
